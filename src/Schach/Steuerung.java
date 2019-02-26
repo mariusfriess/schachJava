@@ -7,8 +7,13 @@ import Figuren.*;
 public class Steuerung {
 
 	private Figur schachFeld[][];
+	
 	private GUI gui = new GUI(this);
-	private int currentPlayer = 1;
+	
+	private String currentPlayer = "weiss";
+	
+	private Figur selectedFigur;
+	private ArrayList<Koordinate> possibleMoves;
 	
 	public Steuerung() {		
 		schachFeld = new Figur[8][];
@@ -17,87 +22,80 @@ public class Steuerung {
         }
 		
 		// Figuren von Spieler Weiss
-		schachFeld[0][0] = new Turm("schwarz", this);
-		schachFeld[0][0].setPosition(0, 0);
-		schachFeld[1][0] = new Springer("schwarz", this);
-		schachFeld[1][0].setPosition(1, 0);
-		schachFeld[2][0] = new Laeufer("schwarz", this);
-		schachFeld[2][0].setPosition(2, 0);
-		schachFeld[3][0] = new Dame("schwarz", this);
-		schachFeld[3][0].setPosition(3, 0);
-		schachFeld[4][0] = new Koenig("schwarz", this);
-		schachFeld[4][0].setPosition(4, 0);
-		schachFeld[5][0] = new Laeufer("schwarz", this);
-		schachFeld[5][0].setPosition(5, 0);
-		schachFeld[6][0] = new Springer("schwarz", this);
-		schachFeld[6][0].setPosition(6, 0);
-		schachFeld[7][0] = new Turm("schwarz", this);
-		schachFeld[7][0].setPosition(7, 0);
-		schachFeld[0][1] = new Bauer("schwarz", this);
-		schachFeld[0][1].setPosition(0, 1);
-		schachFeld[1][1] = new Bauer("schwarz", this);
-		schachFeld[1][1].setPosition(1, 1);
-		schachFeld[2][1] = new Bauer("schwarz", this);
-		schachFeld[2][1].setPosition(2, 1);
-		schachFeld[3][1] = new Bauer("schwarz", this);
-		schachFeld[3][1].setPosition(3, 1);
-		schachFeld[4][1] = new Bauer("schwarz", this);
-		schachFeld[4][1].setPosition(4, 1);
-		schachFeld[5][1] = new Bauer("schwarz", this);
-		schachFeld[5][1].setPosition(5, 1);
-		schachFeld[6][1] = new Bauer("schwarz", this);
-		schachFeld[6][1].setPosition(6, 1);
-		schachFeld[7][1] = new Bauer("schwarz", this);
-		schachFeld[7][1].setPosition(7, 1);
+		schachFeld[0][0] = new Turm("schwarz", 0, 0, this);
+		schachFeld[1][0] = new Springer("schwarz", 1, 0, this);
+		schachFeld[2][0] = new Laeufer("schwarz", 2, 0, this);
+		schachFeld[3][0] = new Dame("schwarz", 3, 0, this);
+		schachFeld[4][0] = new Koenig("schwarz", 4, 0, this);
+		schachFeld[5][0] = new Laeufer("schwarz", 5, 0, this);
+		schachFeld[6][0] = new Springer("schwarz", 6, 0, this);
+		schachFeld[7][0] = new Turm("schwarz", 7, 0, this);
+		schachFeld[0][1] = new Bauer("schwarz", 0, 1, this);
+		schachFeld[1][1] = new Bauer("schwarz", 1, 1, this);
+		schachFeld[2][1] = new Bauer("schwarz", 2, 1, this);
+		schachFeld[3][1] = new Bauer("schwarz", 3, 1, this);
+		schachFeld[4][1] = new Bauer("schwarz", 4, 1, this);
+		schachFeld[5][1] = new Bauer("schwarz", 5, 1, this);
+		schachFeld[6][1] = new Bauer("schwarz", 6, 1, this);
+		schachFeld[7][1] = new Bauer("schwarz", 7, 1, this);
 		
 		// Figuren von Spieler Schwarz
-		schachFeld[0][7] = new Turm("weiss", this);
-		schachFeld[0][7].setPosition(0, 7);
-		schachFeld[1][7] = new Springer("weiss", this);
-		schachFeld[1][7].setPosition(1, 7);
-		schachFeld[2][7] = new Laeufer("weiss", this);
-		schachFeld[2][7].setPosition(2, 7);
-		schachFeld[3][7] = new Dame("weiss", this);
-		schachFeld[3][7].setPosition(3, 7);
-		schachFeld[4][7] = new Koenig("weiss", this);
-		schachFeld[4][7].setPosition(4, 7);
-		schachFeld[5][7] = new Laeufer("weiss", this);
-		schachFeld[5][7].setPosition(5, 7);
-		schachFeld[6][7] = new Springer("weiss", this);
-		schachFeld[6][7].setPosition(6, 7);
-		schachFeld[7][7] = new Turm("weiss", this);
-		schachFeld[7][7].setPosition(7, 7);
-		schachFeld[0][6] = new Bauer("weiss", this);
-		schachFeld[0][6].setPosition(0, 6);
-		schachFeld[1][6] = new Bauer("weiss", this);
-		schachFeld[1][6].setPosition(1, 6);
-		schachFeld[2][6] = new Bauer("weiss", this);
-		schachFeld[2][6].setPosition(2, 6);
-		schachFeld[3][6] = new Bauer("weiss", this);
-		schachFeld[3][6].setPosition(3, 6);
-		schachFeld[4][6] = new Bauer("weiss", this);
-		schachFeld[4][6].setPosition(4, 6);
-		schachFeld[5][6] = new Bauer("weiss", this);
-		schachFeld[5][6].setPosition(5, 6);
-		schachFeld[6][6] = new Bauer("weiss", this);
-		schachFeld[6][6].setPosition(6, 6);
-		schachFeld[7][6] = new Bauer("weiss", this);
-		schachFeld[7][6].setPosition(7, 6);
+		schachFeld[0][7] = new Turm("weiss", 0, 7, this);
+		schachFeld[1][7] = new Springer("weiss", 1, 7, this);
+		schachFeld[2][7] = new Laeufer("weiss", 2, 7, this);
+		schachFeld[3][7] = new Dame("weiss", 3, 7, this);
+		schachFeld[4][7] = new Koenig("weiss", 4, 7, this);
+		schachFeld[5][7] = new Laeufer("weiss", 5, 7, this);
+		schachFeld[6][7] = new Springer("weiss", 6, 7, this);
+		schachFeld[7][7] = new Turm("weiss", 7, 7, this);
+		schachFeld[0][6] = new Bauer("weiss", 0, 6, this);
+		schachFeld[1][6] = new Bauer("weiss", 1, 6, this);
+		schachFeld[2][6] = new Bauer("weiss", 2, 6, this);
+		schachFeld[3][6] = new Bauer("weiss", 3, 6, this);
+		schachFeld[4][6] = new Bauer("weiss", 4, 6, this);
+		schachFeld[5][6] = new Bauer("weiss", 5, 6, this);
+		schachFeld[6][6] = new Bauer("weiss", 6, 6, this);
+		schachFeld[7][6] = new Bauer("weiss", 7, 6, this);
 	}
 	
 	private boolean spielerKannSichBewegen() {
-		String aktuellerSpielerFarbe = this.currentPlayer == 1 ? "weiss": "schwarz";
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {
 				if(schachFeld[i][j] != null) {
 					ArrayList<Koordinate> possibleMoves = schachFeld[i][j].getAllPossibleMoves();
 					for(Koordinate possibleMove: possibleMoves) {
-						
+						// TODO
 					}
 				}
 			}
 		}
 		return true;
+	}
+	
+	public void spielerKlick(int x, int y) {
+		Figur f = getFigurAt(x, y);
+		if(f != null && f.getSpielerFarbe() == currentPlayer) {
+			// TODO Show possible Moves
+			selectedFigur = f;
+			possibleMoves = f.getAllPossibleMoves();
+			gui.getSchachbrettGrafik().setPossibleMoves(possibleMoves);
+		}else {
+			// TODO Bewege Figur wenn moeglich
+			if(possibleMoves == null) return;
+			for(Koordinate possibleMove: possibleMoves) {
+				if(possibleMove.getX() == x && possibleMove.getY() == y) {
+					// TODO Bewege Figur
+					System.out.println("FIGUR DARF BEWEGEN");
+					schachFeld[selectedFigur.getX()][selectedFigur.getY()] = null;
+					schachFeld[x][y] = selectedFigur;
+					selectedFigur.setPosition(x, y);
+					selectedFigur = null;
+					currentPlayer = currentPlayer == "weiss" ? "schwarz": "weiss";
+				}else {
+					possibleMoves = null;
+				}
+			}
+		}
 	}
 	
 	public boolean istPattOderSchachmatt() {

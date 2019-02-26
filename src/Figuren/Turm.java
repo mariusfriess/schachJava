@@ -6,8 +6,8 @@ import Schach.Steuerung;
 
 public class Turm extends Figur {
 	
-	public Turm(String spielerFarbe, Steuerung steuerung) {
-		super(spielerFarbe, steuerung);
+	public Turm(String spielerFarbe, int y, int x, Steuerung steuerung) {
+		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/turm_weiss.png";
 		}else {

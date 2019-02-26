@@ -6,8 +6,8 @@ import Schach.Steuerung;
 
 public class Koenig extends Figur {
 	
-	public Koenig(String spielerFarbe, Steuerung steuerung) {
-		super(spielerFarbe, steuerung);
+	public Koenig(String spielerFarbe, int x, int y, Steuerung steuerung) {
+		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/koenig_weiss.png";
 		}else {

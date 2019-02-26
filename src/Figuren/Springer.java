@@ -6,8 +6,8 @@ import Schach.Steuerung;
 
 public class Springer extends Figur {
 	
-	public Springer(String spielerFarbe, Steuerung steuerung) {
-		super(spielerFarbe, steuerung);
+	public Springer(String spielerFarbe, int x, int y, Steuerung steuerung) {
+		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/springer_weiss.png";
 		}else {

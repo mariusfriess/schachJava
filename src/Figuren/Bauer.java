@@ -8,8 +8,8 @@ public class Bauer extends Figur {
 	
 	private boolean firstMove = true;
 	
-	public Bauer(String spielerFarbe, Steuerung steuerung) {
-		super(spielerFarbe, steuerung);
+	public Bauer(String spielerFarbe, int x, int y, Steuerung steuerung) {
+		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/bauer_weiss.png";
 		}else {

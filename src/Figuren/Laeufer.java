@@ -6,8 +6,8 @@ import Schach.Steuerung;
 
 public class Laeufer extends Figur {
 	
-	public Laeufer(String spielerFarbe, Steuerung steuerung) {
-		super(spielerFarbe, steuerung);
+	public Laeufer(String spielerFarbe, int x, int y, Steuerung steuerung) {
+		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/laeufer_weiss.png";
 		}else {

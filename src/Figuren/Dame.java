@@ -6,8 +6,8 @@ import Schach.Steuerung;
 
 public class Dame extends Figur {
 	
-	public Dame(String spielerFarbe, Steuerung steuerung) {
-		super(spielerFarbe, steuerung);
+	public Dame(String spielerFarbe, int x, int y, Steuerung steuerung) {
+		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/dame_weiss.png";
 		}else {

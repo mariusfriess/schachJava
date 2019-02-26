@@ -25,6 +25,7 @@ public class SchachbrettGrafik extends JPanel {
 	private int clickedY = -1;
 
 	private Steuerung steuerung;
+	private ArrayList<Koordinate> possibleMoves = null;
 
 	public SchachbrettGrafik(Steuerung steuerung) {
 		this.steuerung = steuerung;
@@ -34,9 +35,10 @@ public class SchachbrettGrafik extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("Gedrueckt: " + (e.getX() / 100) + " | " + (e.getY() / 100));
+				possibleMoves = null;
 				clickedX = e.getX() / 100;
 				clickedY = e.getY() / 100;
+				steuerung.spielerKlick(clickedX, clickedY);
 				repaint();
 			}
 		});
@@ -45,20 +47,22 @@ public class SchachbrettGrafik extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		drawBoard(g);
-		test(g);
+		if(possibleMoves != null) {
+			drawPossibleMoves(g);
+		}
 	}
 	
-	private void test(Graphics g) {
-		if(this.steuerung.getFigurAt(clickedX, clickedY) != null) {
-			ArrayList<Koordinate> possibleMoves = this.steuerung.getFigurAt(clickedX, clickedY).getAllPossibleMoves();
-			for(Koordinate possibleMove: possibleMoves) {
-				Color color = new Color(252, 236, 93);
-				int x = possibleMove.getX() * 100;
-				int y = possibleMove.getY() * 100;
-				System.out.println("X: " + x + " Y: " + y);
-				drawTile(g, x, y, color);
-			}
-		}
+	public void setPossibleMoves(ArrayList<Koordinate> possibleMoves) {
+		this.possibleMoves = possibleMoves;
+	}
+	
+	private void drawPossibleMoves(Graphics g) {
+		Color color = new Color(252, 236, 93);
+		for(Koordinate possibleMove: possibleMoves) {
+			int x = possibleMove.getX() * size;
+			int y = possibleMove.getY() * size;
+			drawTile(g, x, y, color);
+ 		}
 	}
 	
 	// Rechteck mit gegebener Farbe und Gr��e zeichnen
