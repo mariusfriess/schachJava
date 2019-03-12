@@ -90,7 +90,7 @@ public class Steuerung {
 					selectedFigur.setPosition(x, y);
 					selectedFigur = null;
 					currentPlayer = currentPlayer == "weiss" ? "schwarz": "weiss";
-					gui.getMenuGrafik().spielerWechseln(currentPlayer);
+					//gui.getMenuGrafik().spielerWechseln(currentPlayer);
 				}else {
 					possibleMoves = null;
 				}

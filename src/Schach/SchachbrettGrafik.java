@@ -62,14 +62,21 @@ public class SchachbrettGrafik extends JPanel {
 		for(Koordinate possibleMove: possibleMoves) {
 			int x = possibleMove.getX() * size;
 			int y = possibleMove.getY() * size;
-			drawTile(g, x, y, color);
+			drawCircle(g, x, y, color);
  		}
 	}
 	
-	// Rechteck mit gegebener Farbe und Gr��e zeichnen
+	// Rechteck mit gegebener Farbe und Groesse zeichnen
 	private void drawTile(Graphics g, int x, int y, Color color){
         g.setColor(color);
         g.fillRect(x, y, this.size, this.size);
+	}
+	
+	private void drawCircle(Graphics g, int x, int y, Color color){
+        g.setColor(color);
+        int z = (int) (this.size * 0.8);
+        System.out.println(z);
+        g.fillRoundRect(x + ((this.size - z) / 2), y + ((this.size - z) / 2), z, z, 20, 20);
 	}
 
 	private void drawFiguren(Graphics g) {

@@ -9,7 +9,7 @@ import javax.swing.JTextArea;
 
 public class MenuGrafik extends JPanel {
 	
-	private JTextArea textFeld = new JTextArea("Spieler Weiﬂ ist an der Reihe.");
+	private JTextArea textFeld = new JTextArea("Spieler Weiss ist an der Reihe.");
 	private FlowLayout flowLayout = new FlowLayout();
 
 	public MenuGrafik() {
