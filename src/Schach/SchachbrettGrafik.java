@@ -50,6 +50,7 @@ public class SchachbrettGrafik extends JPanel {
 		if(possibleMoves != null) {
 			drawPossibleMoves(g);
 		}
+        drawFiguren(g);
 	}
 	
 	public void setPossibleMoves(ArrayList<Koordinate> possibleMoves) {
@@ -70,17 +71,17 @@ public class SchachbrettGrafik extends JPanel {
         g.setColor(color);
         g.fillRect(x, y, this.size, this.size);
 	}
-	
+
 	private void drawFiguren(Graphics g) {
 		Figur schachFeld[][] = steuerung.getBoard();
 		for(int i = 0; i < schachFeld.length; i++) {
 			for(int j = 0; j < schachFeld[i].length; j++) {
 				if(schachFeld[i][j] != null) {
 					try {
-			            BufferedImage image = ImageIO.read(new File(schachFeld[i][j].getImage()));  // read image for this piece
-			            g.drawImage(image, i * this.size, j * this.size, this.size, this.size, null);             // draw the image
-			        } catch (Exception e) { // this should never happen
-			            System.out.println("ERROR: Cannot load image file\n"); // this exception should never happen
+			            BufferedImage image = ImageIO.read(new File(schachFeld[i][j].getImage()));
+			            g.drawImage(image, i * this.size, j * this.size, this.size, this.size, null);
+			        } catch (Exception e) {
+			            System.out.println("ERROR: Bild kann nicht geladen werden");
 			            System.exit(0);
 			        }
 				}
@@ -107,7 +108,6 @@ public class SchachbrettGrafik extends JPanel {
             }
             count++;
         }
-        drawFiguren(g);
 	}
 	
 }

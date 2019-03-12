@@ -6,7 +6,7 @@ import Schach.Steuerung;
 
 public class Turm extends Figur {
 	
-	public Turm(String spielerFarbe, int y, int x, Steuerung steuerung) {
+	public Turm(String spielerFarbe, int x, int y, Steuerung steuerung) {
 		super(spielerFarbe, x, y, steuerung);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/turm_weiss.png";
@@ -22,30 +22,46 @@ public class Turm extends Figur {
 		
 		// nach oben
 		for(int i = this.y + 1; i < 8; i++) {
-			if(this.game.getFigurAt(this.x, i) != null)
+			if(this.game.getFigurAt(x, i) == null)
+				possibleMoves.add(new Koordinate(x, i));
+			else if(game.getFigurAt(x, i).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(x, i));
 				break;
-			possibleMoves.add(new Koordinate(this.x, i));
+			}
+			else break;
 		}
 		
 		// nach unten
 		for(int i = this.y - 1; i >= 0; i--) {
-			if(this.game.getFigurAt(this.x, i) != null)
+			if(this.game.getFigurAt(x, i) == null)
+				possibleMoves.add(new Koordinate(x, i));
+			else if(game.getFigurAt(x, i).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(x, i));
 				break;
-			possibleMoves.add(new Koordinate(this.x, i));
+			}
+			else break;
 		}
 		
 		// nach links
 		for(int i = this.x - 1; i >= 0; i--) {
-			if(this.game.getFigurAt(i, this.y) != null)
+			if(this.game.getFigurAt(i, y) == null)
+				possibleMoves.add(new Koordinate(i, y));
+			else if(game.getFigurAt(i, y).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, y));
 				break;
-			possibleMoves.add(new Koordinate(i, this.y));
+			}
+			else break;
 		}
 		
 		// nach rechts
 		for(int i = this.x + 1; i < 8; i++) {
-			if(this.game.getFigurAt(i, this.y) != null)
+			if(this.game.getFigurAt(i, y) == null)
+				possibleMoves.add(new Koordinate(i, y));
+			else if(game.getFigurAt(i, y).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, y));
 				break;
-			possibleMoves.add(new Koordinate(i, this.y));
+			}
+			else break;
 		}
 		
 		return possibleMoves;

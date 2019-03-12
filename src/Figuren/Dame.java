@@ -22,59 +22,90 @@ public class Dame extends Figur {
 		
 		// nach oben links
 		for(int i = this.x - 1, j = this.y + 1; i >= 0 && j < 8; i--, j++) {
-			if(this.game.getFigurAt(i, j) != null)
+			if(this.game.getFigurAt(i, j) == null)
+				possibleMoves.add(new Koordinate(i, j));
+			else if(game.getFigurAt(i, j).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, j));
 				break;
-			possibleMoves.add(new Koordinate(i, j));
+			}
+			else break;
 		}
 		
 		// nach oben rechts
 		for(int i = this.x + 1, j = this.y + 1; i < 8 && j < 8; i++, j++) {
-			if(this.game.getFigurAt(i, j) != null)
+			if(this.game.getFigurAt(i, j) == null)
+				possibleMoves.add(new Koordinate(i, j));
+			else if(game.getFigurAt(i, j).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, j));
 				break;
-			possibleMoves.add(new Koordinate(i, j));
+			}
+			else break;
 		}
 		
 		// nach unten rechts
 		for(int i = this.x + 1, j = this.y - 1; i < 8 && j >= 0; i++, j--) {
-			if(this.game.getFigurAt(i, j) != null)
+			if(this.game.getFigurAt(i, j) == null)
+				possibleMoves.add(new Koordinate(i, j));
+			else if(game.getFigurAt(i, j).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, j));
 				break;
-			possibleMoves.add(new Koordinate(i, j));
+			}
+			else break;
 		}
 		
 		// nach unten links
 		for(int i = this.x - 1, j = this.y - 1; i >= 0 && j >= 0; i--, j--) {
-			if(this.game.getFigurAt(i, j) != null)
+			if(this.game.getFigurAt(i, j) == null)
+				possibleMoves.add(new Koordinate(i, j));
+			else if(game.getFigurAt(i, j).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, j));
 				break;
-			possibleMoves.add(new Koordinate(i, j));
+			}
+			else break;
 		}
 		
 		// nach oben
 		for(int i = this.y + 1; i < 8; i++) {
-			if(this.game.getFigurAt(this.x, i) != null)
+			if(this.game.getFigurAt(x, i) == null)
+				possibleMoves.add(new Koordinate(x, i));
+			else if(game.getFigurAt(x, i).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(x, i));
 				break;
-			possibleMoves.add(new Koordinate(this.x, i));
+			}
+			else break;
 		}
 		
 		// nach unten
 		for(int i = this.y - 1; i >= 0; i--) {
-			if(this.game.getFigurAt(this.x, i) != null)
+			if(this.game.getFigurAt(x, i) == null)
+				possibleMoves.add(new Koordinate(x, i));
+			else if(game.getFigurAt(x, i).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(x, i));
 				break;
-			possibleMoves.add(new Koordinate(this.x, i));
-
+			}
+			else break;
 		}
 		
 		// nach links
 		for(int i = this.x - 1; i >= 0; i--) {
-			if(this.game.getFigurAt(i, this.y) != null)
+			if(this.game.getFigurAt(i, y) == null)
+				possibleMoves.add(new Koordinate(i, y));
+			else if(game.getFigurAt(i, y).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, y));
 				break;
-			possibleMoves.add(new Koordinate(i, this.y));
+			}
+			else break;
 		}
 		
 		// nach rechts
 		for(int i = this.x + 1; i < 8; i++) {
-			if(this.game.getFigurAt(i, this.y) != null)
+			if(this.game.getFigurAt(i, y) == null)
+				possibleMoves.add(new Koordinate(i, y));
+			else if(game.getFigurAt(i, y).getSpielerFarbe() != spielerFarbe) {
+				possibleMoves.add(new Koordinate(i, y));
 				break;
-			possibleMoves.add(new Koordinate(i, this.y));
+			}
+			else break;
 		}
 		
 		return possibleMoves;
