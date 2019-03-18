@@ -2,12 +2,13 @@ package Figuren;
 
 import java.util.ArrayList;
 
+import Schach.Schachbrett;
 import Schach.Steuerung;
 
 public class Koenig extends Figur {
 	
-	public Koenig(String spielerFarbe, int x, int y, Steuerung steuerung) {
-		super(spielerFarbe, x, y, steuerung);
+	public Koenig(String spielerFarbe, int x, int y, Schachbrett brett) {
+		super(spielerFarbe, x, y, brett);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/koenig_weiss.png";
 		}else {
@@ -16,6 +17,24 @@ public class Koenig extends Figur {
 	}
 	
 	public boolean istImSchach() {
+		Figur schachFeld[][] = game.getBoard();
+		for(int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++) {
+				if(schachFeld[i][j] != null && schachFeld[i][j].spielerFarbe != this.spielerFarbe) {
+					ArrayList<Koordinate> possibleMoves = schachFeld[i][j].getAllPossibleMoves();
+					for(Koordinate possibleMove: possibleMoves) {
+						if(this.x == possibleMove.getX() && this.y == possibleMove.getY()) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean istSchachmatt() {
+		// TODO RICHTIG IMPLEMENTIEREN
 		Figur schachFeld[][] = game.getBoard();
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {

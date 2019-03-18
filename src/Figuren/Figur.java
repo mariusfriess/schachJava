@@ -2,6 +2,7 @@ package Figuren;
 
 import java.util.ArrayList;
 
+import Schach.Schachbrett;
 import Schach.Steuerung;
 
 public abstract class Figur {
@@ -10,13 +11,13 @@ public abstract class Figur {
 	protected int x;
 	protected int y;
 	protected String spielerFarbe;
-	protected Steuerung game;
+	protected Schachbrett game;
 
-	public Figur(String spielerFarbe, int x, int y, Steuerung game){
+	public Figur(String spielerFarbe, int x, int y, Schachbrett brett){
 		this.spielerFarbe = spielerFarbe;
 		this.x = x;
 		this.y = y;
-		this.game = game;
+		this.game = brett;
 	}
 	
 	public String getImage() {

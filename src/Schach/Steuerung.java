@@ -4,52 +4,70 @@ import java.util.ArrayList;
 
 import Figuren.*;
 
-public class Steuerung {
+public class Steuerung implements Runnable {
 
 	private Figur schachFeld[][];
 	
 	private GUI gui = new GUI(this);
+	private Schachbrett brett = new Schachbrett();
 	
 	private String currentPlayer = "weiss";
 	
 	private Figur selectedFigur;
 	private ArrayList<Koordinate> possibleMoves;
 	
+	private Koenig koenigSpielerWeiss;
+	private Koenig koenigSpielerSchwarz;
+	
+	private boolean running = true;
+	
+	public static final int FPS = 60;
+	public static final long maxLoopTime = 1000 / FPS;
+	
+	private int clickedX = -1;
+	private int clickedY = -1;
+	
 	public static void main(String[] args) {
 		new Steuerung();
 	}
 	
 	public Steuerung() {		
-		schachFeld = new Figur[8][];
-		for(int i = 0; i < 8; i++) {
-            schachFeld[i] = new Figur[8];
-        }
 		
-		// Figuren von Spieler Weiss
-		schachFeld[0][0] = new Turm("schwarz", 0, 0, this);
-		schachFeld[1][0] = new Springer("schwarz", 1, 0, this);
-		schachFeld[2][0] = new Laeufer("schwarz", 2, 0, this);
-		schachFeld[3][0] = new Dame("schwarz", 3, 0, this);
-		schachFeld[4][0] = new Koenig("schwarz", 4, 0, this);
-		schachFeld[5][0] = new Laeufer("schwarz", 5, 0, this);
-		schachFeld[6][0] = new Springer("schwarz", 6, 0, this);
-		schachFeld[7][0] = new Turm("schwarz", 7, 0, this);
-		for(int i = 0; i < 8; i++) {
-			schachFeld[i][1] = new Bauer("schwarz", i, 1, this);
-		}
 		
-		// Figuren von Spieler Schwarz
-		schachFeld[0][7] = new Turm("weiss", 0, 7, this);
-		schachFeld[1][7] = new Springer("weiss", 1, 7, this);
-		schachFeld[2][7] = new Laeufer("weiss", 2, 7, this);
-		schachFeld[3][7] = new Dame("weiss", 3, 7, this);
-		schachFeld[4][7] = new Koenig("weiss", 4, 7, this);
-		schachFeld[5][7] = new Laeufer("weiss", 5, 7, this);
-		schachFeld[6][7] = new Springer("weiss", 6, 7, this);
-		schachFeld[7][7] = new Turm("weiss", 7, 7, this);
-		for(int i = 0; i < 8; i++) {
-			schachFeld[i][6] = new Bauer("weiss", i, 6, this);
-		}
+		new Thread(this).run();
+	}
+	
+	@Override
+	public void run() {
+		System.out.print("Thread started");
+		long timestamp;
+	    long oldTimestamp;
+	    
+	    while(running) {
+	      oldTimestamp = System.currentTimeMillis();
+	      update();
+	      timestamp = System.currentTimeMillis();
+	      if(timestamp-oldTimestamp > maxLoopTime) {
+	        System.out.println("Wir zu spät!");
+	        continue;
+	      }
+	      //gui.repaint();
+	      gui.getSchachbrettGrafik().paintImmediately(0, 0, 800, 800);
+	      timestamp = System.currentTimeMillis();
+	      //System.out.println(maxLoopTime + " : " + (timestamp-oldTimestamp));
+	      if(timestamp-oldTimestamp <= maxLoopTime) {
+	        try {
+	          Thread.sleep(maxLoopTime - (timestamp-oldTimestamp) );
+	        } catch (InterruptedException e) {
+	          e.printStackTrace();
+	        }
+	      }
+	    }
+		
+	}
+	
+	private void update() {
+		spielerKlick();
 	}
 	
 	/*
@@ -71,26 +89,25 @@ public class Steuerung {
 	 * @param x
 	 * @param y
 	 */
-	public void spielerKlick(int x, int y) {
-		Figur f = getFigurAt(x, y);
+	public void spielerKlick() {
+		Figur f = brett.getFigurAt(clickedX, clickedY);
 		if(f != null && f.getSpielerFarbe() == currentPlayer) {
 			// TODO Show possible Moves
 			selectedFigur = f;
 			possibleMoves = f.getAllPossibleMoves();
-			System.out.println(f.getSpielerFarbe() + " | " + f.getX() + " | " + f.getY());
 			gui.getSchachbrettGrafik().setPossibleMoves(possibleMoves);
 		}else {
+			gui.getSchachbrettGrafik().setPossibleMoves(null);
 			// TODO Bewege Figur wenn moeglich
-			if(possibleMoves == null) return;
+			if(possibleMoves == null || selectedFigur == null) return;
 			for(Koordinate possibleMove: possibleMoves) {
-				if(possibleMove.getX() == x && possibleMove.getY() == y) {
+				if(possibleMove.getX() == clickedX && possibleMove.getY() == clickedY) {
 					// TODO Bewege Figur
-					schachFeld[selectedFigur.getX()][selectedFigur.getY()] = null;
-					schachFeld[x][y] = selectedFigur;
-					selectedFigur.setPosition(x, y);
+					brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] = null;
+					brett.getBoard()[clickedX][clickedY] = selectedFigur;
+					selectedFigur.setPosition(clickedX, clickedY);
 					selectedFigur = null;
 					currentPlayer = currentPlayer == "weiss" ? "schwarz": "weiss";
-					//gui.getMenuGrafik().spielerWechseln(currentPlayer);
 				}else {
 					possibleMoves = null;
 				}
@@ -98,16 +115,15 @@ public class Steuerung {
 		}
 	}
 	
+	public Schachbrett getSchachbrett() {
+		return brett;
+	}
+	
 	public boolean istPattOderSchachmatt() {
 		return false;
 	}
-	
-	public Figur getFigurAt(int x, int y) {
-		if(x < 0 || x > 7 || y < 0 || y > 7) return null;
-		else return schachFeld[x][y];
-	}
-	
-	public Figur[][] getBoard() {
-		return this.schachFeld;
+	public void setClick(int x, int y) {
+		this.clickedX = x;
+		this.clickedY = y;
 	}
 }

@@ -2,12 +2,13 @@ package Figuren;
 
 import java.util.ArrayList;
 
+import Schach.Schachbrett;
 import Schach.Steuerung;
 
 public class Turm extends Figur {
 	
-	public Turm(String spielerFarbe, int x, int y, Steuerung steuerung) {
-		super(spielerFarbe, x, y, steuerung);
+	public Turm(String spielerFarbe, int x, int y, Schachbrett brett) {
+		super(spielerFarbe, x, y, brett);
 		if(spielerFarbe == "weiss") {
 			this.image = "Assets/Figuren/turm_weiss.png";
 		}else {

@@ -9,6 +9,7 @@ import Figuren.Koordinate;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,35 +22,27 @@ public class SchachbrettGrafik extends JPanel {
 	private static final long serialVersionUID = 1137300914749937758L;
 	
 	private int size = 100;
-	private int clickedX = -1;
-	private int clickedY = -1;
 
 	private Steuerung steuerung;
 	private ArrayList<Koordinate> possibleMoves = null;
 
 	public SchachbrettGrafik(Steuerung steuerung) {
 		this.steuerung = steuerung;
-		
-		repaint();
-		
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				possibleMoves = null;
-				clickedX = e.getX() / 100;
-				clickedY = e.getY() / 100;
-				steuerung.spielerKlick(clickedX, clickedY);
-				repaint();
+				// TODO Auto-generated method stub
+				super.mousePressed(e);
+				steuerung.setClick(e.getX() / size, e.getY() / size);
 			}
 		});
 	}
 	
 	@Override
-	public void paint(Graphics g) {
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		drawBoard(g);
-		if(possibleMoves != null) {
-			drawPossibleMoves(g);
-		}
+		drawPossibleMoves(g);
         drawFiguren(g);
 	}
 	
@@ -58,12 +51,19 @@ public class SchachbrettGrafik extends JPanel {
 	}
 	
 	private void drawPossibleMoves(Graphics g) {
-		Color color = new Color(252, 236, 93);
-		for(Koordinate possibleMove: possibleMoves) {
-			int x = possibleMove.getX() * size;
-			int y = possibleMove.getY() * size;
-			drawCircle(g, x, y, color);
- 		}
+		if(possibleMoves != null) {
+			Color color = new Color(252, 236, 93);
+			Color color2 = new Color(255, 65, 54);
+			for(Koordinate possibleMove: possibleMoves) {
+				int x = possibleMove.getX() * size;
+				int y = possibleMove.getY() * size;
+				if(steuerung.getSchachbrett().getFigurAt(possibleMove.getX(), possibleMove.getY()) != null) {
+					drawCircle(g, x, y, color2);
+				}else {
+					drawCircle(g, x, y, color);
+				}
+	 		}
+		}
 	}
 	
 	// Rechteck mit gegebener Farbe und Groesse zeichnen
@@ -75,12 +75,11 @@ public class SchachbrettGrafik extends JPanel {
 	private void drawCircle(Graphics g, int x, int y, Color color){
         g.setColor(color);
         int z = (int) (this.size * 0.8);
-        System.out.println(z);
         g.fillRoundRect(x + ((this.size - z) / 2), y + ((this.size - z) / 2), z, z, 20, 20);
 	}
 
 	private void drawFiguren(Graphics g) {
-		Figur schachFeld[][] = steuerung.getBoard();
+		Figur schachFeld[][] = steuerung.getSchachbrett().getBoard();
 		for(int i = 0; i < schachFeld.length; i++) {
 			for(int j = 0; j < schachFeld[i].length; j++) {
 				if(schachFeld[i][j] != null) {
