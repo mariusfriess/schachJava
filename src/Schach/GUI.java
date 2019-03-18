@@ -33,9 +33,24 @@ public class GUI extends JFrame {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+		this.createBufferStrategy(2);
 	}
 	
 	public SchachbrettGrafik getSchachbrettGrafik() {
 		return this.schachbrettGrafik;
+	}
+	
+	public SpielerWeissGrafik getSpielerWeissGrafik() {
+		return this.spielerWeissGrafik;
+	}
+	
+	public SpielerSchwarzGrafik getSpielerSchwarzGrafik() {
+		return this.spielerSchwarzGrafik;
+	}
+	
+	public void repaintAll() {
+		spielerSchwarzGrafik.paintImmediately(0, 0, 200, 800);
+		spielerWeissGrafik.paintImmediately(0, 0, 200, 800);
+		schachbrettGrafik.paintImmediately(0, 0, 800, 800);
 	}
 }

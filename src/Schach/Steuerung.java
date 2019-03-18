@@ -1,6 +1,9 @@
 package Schach;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import Figuren.*;
 
@@ -12,6 +15,10 @@ public class Steuerung implements Runnable {
 	private Schachbrett brett = new Schachbrett();
 	
 	private String currentPlayer = "weiss";
+	
+	private Timer timer = new Timer();
+	private int timeSpielerWeiss = 300;
+	private int timeSpielerSchwarz = 300;
 	
 	private Figur selectedFigur;
 	private ArrayList<Koordinate> possibleMoves;
@@ -43,16 +50,19 @@ public class Steuerung implements Runnable {
 		long timestamp;
 	    long oldTimestamp;
 	    
+	    gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
+	    gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
+	    gui.getSpielerWeissGrafik().setActive(true);
+	    
 	    while(running) {
 	      oldTimestamp = System.currentTimeMillis();
 	      update();
 	      timestamp = System.currentTimeMillis();
 	      if(timestamp-oldTimestamp > maxLoopTime) {
-	        System.out.println("Wir zu spät!");
+	        System.out.println("Wir zu spaeht!");
 	        continue;
 	      }
-	      //gui.repaint();
-	      gui.getSchachbrettGrafik().paintImmediately(0, 0, 800, 800);
+	      gui.repaint();
 	      timestamp = System.currentTimeMillis();
 	      //System.out.println(maxLoopTime + " : " + (timestamp-oldTimestamp));
 	      if(timestamp-oldTimestamp <= maxLoopTime) {
@@ -107,12 +117,37 @@ public class Steuerung implements Runnable {
 					brett.getBoard()[clickedX][clickedY] = selectedFigur;
 					selectedFigur.setPosition(clickedX, clickedY);
 					selectedFigur = null;
-					currentPlayer = currentPlayer == "weiss" ? "schwarz": "weiss";
+					changePlayer();
 				}else {
 					possibleMoves = null;
 				}
 			}
 		}
+	}
+	
+	private void changePlayer() {
+		currentPlayer = currentPlayer == "weiss" ? "schwarz": "weiss";
+		if(currentPlayer == "weiss"){
+			gui.getSpielerWeissGrafik().setActive(true);
+			gui.getSpielerSchwarzGrafik().setActive(false);
+		}else {
+			gui.getSpielerWeissGrafik().setActive(false);
+			gui.getSpielerSchwarzGrafik().setActive(true);
+		}
+		timer.cancel();
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if(currentPlayer == "weiss"){
+					timeSpielerWeiss--;
+					gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
+				}else {
+					timeSpielerSchwarz--;
+					gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
+				}
+			}
+		}, 1000, 1000);
 	}
 	
 	public Schachbrett getSchachbrett() {
