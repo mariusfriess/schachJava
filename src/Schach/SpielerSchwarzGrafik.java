@@ -29,6 +29,7 @@ public class SpielerSchwarzGrafik extends JPanel {
 		textfeld.setBackground(new Color(0,0,0,0));
 		timeFeld.setEditable(false);
 		timeFeld.setBackground(new Color(0,0,0,0));
+		timeFeld.setFocusable(false);
 		this.setLayout(new BorderLayout());
 		
 		infoPanel.setBackground(Color.WHITE);

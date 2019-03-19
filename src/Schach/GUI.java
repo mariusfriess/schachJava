@@ -48,9 +48,8 @@ public class GUI extends JFrame {
 		return this.spielerSchwarzGrafik;
 	}
 	
-	public void repaintAll() {
-		spielerSchwarzGrafik.paintImmediately(0, 0, 200, 800);
-		spielerWeissGrafik.paintImmediately(0, 0, 200, 800);
-		schachbrettGrafik.paintImmediately(0, 0, 800, 800);
+	public void repaintMenus() {
+		this.spielerWeissGrafik.repaint();
+		this.spielerSchwarzGrafik.repaint();
 	}
 }

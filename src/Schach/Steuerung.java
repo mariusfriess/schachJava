@@ -1,18 +1,25 @@
 package Schach;
 
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+
 import Figuren.*;
 
 public class Steuerung implements Runnable {
 
-	private Figur schachFeld[][];
+	private Schachbrett brett = new Schachbrett();
 	
 	private GUI gui = new GUI(this);
-	private Schachbrett brett = new Schachbrett();
 	
 	private String currentPlayer = "weiss";
 	
@@ -23,25 +30,25 @@ public class Steuerung implements Runnable {
 	private Figur selectedFigur;
 	private ArrayList<Koordinate> possibleMoves;
 	
-	private Koenig koenigSpielerWeiss;
-	private Koenig koenigSpielerSchwarz;
+	//private Koenig koenigSpielerWeiss;
+	//private Koenig koenigSpielerSchwarz;
 	
 	private boolean running = true;
 	
-	public static final int FPS = 60;
+	public static final int FPS = 30;
 	public static final long maxLoopTime = 1000 / FPS;
 	
 	private int clickedX = -1;
 	private int clickedY = -1;
 	
+	Thread t = new Thread(this);
+	
 	public static void main(String[] args) {
 		new Steuerung();
 	}
 	
-	public Steuerung() {		
-		
-		
-		new Thread(this).run();
+	public Steuerung() {
+		t.run();
 	}
 	
 	@Override
@@ -63,6 +70,7 @@ public class Steuerung implements Runnable {
 	        continue;
 	      }
 	      gui.repaint();
+	      //gui.getSchachbrettGrafik().paintImmediately(0,0,800,800);
 	      timestamp = System.currentTimeMillis();
 	      //System.out.println(maxLoopTime + " : " + (timestamp-oldTimestamp));
 	      if(timestamp-oldTimestamp <= maxLoopTime) {
@@ -102,7 +110,6 @@ public class Steuerung implements Runnable {
 	public void spielerKlick() {
 		Figur f = brett.getFigurAt(clickedX, clickedY);
 		if(f != null && f.getSpielerFarbe() == currentPlayer) {
-			// TODO Show possible Moves
 			selectedFigur = f;
 			possibleMoves = f.getAllPossibleMoves();
 			gui.getSchachbrettGrafik().setPossibleMoves(possibleMoves);
@@ -113,6 +120,18 @@ public class Steuerung implements Runnable {
 			for(Koordinate possibleMove: possibleMoves) {
 				if(possibleMove.getX() == clickedX && possibleMove.getY() == clickedY) {
 					// TODO Bewege Figur
+					if(brett.getBoard()[clickedX][clickedY] instanceof Koenig) {
+						gameOver();
+					}
+					if(brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] instanceof Bauer) {
+						// TODO Spieler kann Figur tauschen, wenn Bauer am gegenerischen Ende
+						if(currentPlayer == "weiss" && clickedY == 0) {
+							System.out.println("TEST 1");
+						}
+						else if(currentPlayer == "schwarz" && clickedY == 7) {
+							System.out.println("TEST 2");
+						}
+					}
 					brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] = null;
 					brett.getBoard()[clickedX][clickedY] = selectedFigur;
 					selectedFigur.setPosition(clickedX, clickedY);
@@ -122,6 +141,43 @@ public class Steuerung implements Runnable {
 					possibleMoves = null;
 				}
 			}
+		}
+	}
+	
+	private void gameOver() {
+		running = false;
+		t = null;
+		timer.cancel();
+		System.out.println("Spieler " + currentPlayer + " hat gewonnen");
+		
+		Object[] options = {"Neues Spiel", "Schließen"};
+
+		int dialogResult = JOptionPane.showOptionDialog(
+				null,
+				"Spieler " + currentPlayer + " hat gewonnen!", 
+				"Game Over",
+				JOptionPane.DEFAULT_OPTION, 
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				options,
+				options[0]);
+		
+		System.out.println("RESULT: "+ dialogResult);
+		if(dialogResult == 0) {
+			timeSpielerWeiss = 300;
+			timeSpielerSchwarz = 300;
+			brett = new Schachbrett();
+			currentPlayer = "weiss";
+			gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
+		    gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
+		    gui.getSpielerWeissGrafik().setActive(true);
+		    clickedX = -1;
+		    clickedY = -1;
+		    possibleMoves = null;
+		    selectedFigur = null;
+			running = true;
+			t = new Thread(this);
+			t.run();
 		}
 	}
 	

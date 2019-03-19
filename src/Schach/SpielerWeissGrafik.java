@@ -32,6 +32,7 @@ public class SpielerWeissGrafik extends JPanel {
 		textfeld.setFont(new Font("Sans serif", Font.PLAIN, 24));
 		timeFeld.setEditable(false);
 		timeFeld.setBackground(new Color(0,0,0,0));
+		timeFeld.setFocusable(false);
 		this.setLayout(new BorderLayout());
 		
 		infoPanel.setBackground(Color.WHITE);
