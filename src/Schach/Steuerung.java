@@ -51,6 +51,22 @@ public class Steuerung implements Runnable {
 		t.run();
 	}
 	
+	private void repaintWindow() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+
+				@Override
+				public void run() {
+					gui.getSchachbrettGrafik().paintImmediately(0,0,800,800);
+					gui.repaintMenus();
+				}
+				
+			});
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void run() {
 		System.out.print("Thread started");
@@ -69,8 +85,7 @@ public class Steuerung implements Runnable {
 	        System.out.println("Wir zu spaeht!");
 	        continue;
 	      }
-	      gui.repaint();
-	      //gui.getSchachbrettGrafik().paintImmediately(0,0,800,800);
+	      repaintWindow();
 	      timestamp = System.currentTimeMillis();
 	      //System.out.println(maxLoopTime + " : " + (timestamp-oldTimestamp));
 	      if(timestamp-oldTimestamp <= maxLoopTime) {
