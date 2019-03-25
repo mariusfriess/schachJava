@@ -37,9 +37,6 @@ public abstract class Figur {
 	}
 	
 	public void setPosition(int x, int y) {
-		if(this instanceof Bauer) {
-			((Bauer) this).setFirstMove(false);
-		}
 		this.x = x;
 		this.y = y;
 	}

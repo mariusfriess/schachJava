@@ -7,6 +7,8 @@ import Schach.Steuerung;
 
 public class Koenig extends Figur {
 	
+	private boolean firstMove = true;
+	
 	public Koenig(String spielerFarbe, int x, int y, Schachbrett brett) {
 		super(spielerFarbe, x, y, brett);
 		if(spielerFarbe == "weiss") {
@@ -14,6 +16,10 @@ public class Koenig extends Figur {
 		}else {
 			this.image = "Assets/Figuren/koenig_schwarz.png";
 		}
+	}
+	
+	public void setFirstMove(boolean firstMove) {
+		this.firstMove = firstMove;
 	}
 	
 	public boolean istImSchach() {
@@ -35,20 +41,26 @@ public class Koenig extends Figur {
 	
 	public boolean istSchachmatt() {
 		// TODO RICHTIG IMPLEMENTIEREN
+		if(!(istImSchach())) return false;
 		Figur schachFeld[][] = game.getBoard();
-		for(int i = 0; i < 8; i++) {
-			for(int j = 0; j < 8; j++) {
-				if(schachFeld[i][j] != null && schachFeld[i][j].spielerFarbe != this.spielerFarbe) {
-					ArrayList<Koordinate> possibleMoves = schachFeld[i][j].getAllPossibleMoves();
-					for(Koordinate possibleMove: possibleMoves) {
-						if(this.x == possibleMove.getX() && this.y == possibleMove.getY()) {
-							return true;
+		ArrayList<Koordinate> myPossibleMoves = getAllPossibleMoves();
+		for(Koordinate myPossibleMove: myPossibleMoves) {
+			boolean z = false;
+			for(int i = 0; i < 8; i++) {
+				for(int j = 0; j < 8; j++) {
+					if(schachFeld[i][j] != null && schachFeld[i][j].spielerFarbe != this.spielerFarbe) {
+						ArrayList<Koordinate> possibleMoves = schachFeld[i][j].getAllPossibleMoves();
+						for(Koordinate possibleMove: possibleMoves) {
+							if(myPossibleMove.getX() == possibleMove.getX() && myPossibleMove.getY() == possibleMove.getY()) {
+								z = true;
+							}
 						}
 					}
 				}
 			}
+			if(z == false) return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

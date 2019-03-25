@@ -7,6 +7,8 @@ import Schach.Steuerung;
 
 public class Turm extends Figur {
 	
+	private boolean firstMove = true;
+	
 	public Turm(String spielerFarbe, int x, int y, Schachbrett brett) {
 		super(spielerFarbe, x, y, brett);
 		if(spielerFarbe == "weiss") {
@@ -14,6 +16,10 @@ public class Turm extends Figur {
 		}else {
 			this.image = "Assets/Figuren/turm_schwarz.png";
 		}
+	}
+	
+	public void setFirstMove(boolean firstMove) {
+		this.firstMove = firstMove;
 	}
 
 	@Override

@@ -25,6 +25,7 @@ public class SchachbrettGrafik extends JPanel {
 
 	private Steuerung steuerung;
 	private ArrayList<Koordinate> possibleMoves = null;
+	private Koordinate redTile = null;
 
 	public SchachbrettGrafik(Steuerung steuerung) {
 		this.steuerung = steuerung;
@@ -34,6 +35,7 @@ public class SchachbrettGrafik extends JPanel {
 				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				steuerung.setClick(e.getX() / size, e.getY() / size);
+				steuerung.spielerKlick();
 			}
 		});
 	}
@@ -114,6 +116,13 @@ public class SchachbrettGrafik extends JPanel {
             }
             count++;
         }
+        if(redTile != null) {
+        	drawTile(g, redTile.getX() * size, redTile.getY() * size, new Color(255, 65, 54));
+        }
+	}
+	
+	public void setRedTile(Koordinate k) {
+		redTile = k;
 	}
 	
 }

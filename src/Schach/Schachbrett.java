@@ -17,8 +17,8 @@ public class Schachbrett {
 	private ArrayList<Figur> figurenSpielerWeiss;
 	private ArrayList<Figur> figurenSpielerSchwarz;
 	
-	private Figur koenigSpielerWeiss;
-	private Figur koenigSpielerSchwarz;
+	private Koenig koenigSpielerWeiss;
+	private Koenig koenigSpielerSchwarz;
 
 	public Schachbrett() {
 		schachbrett = new Figur[8][];
@@ -32,7 +32,7 @@ public class Schachbrett {
 		schachbrett[2][0] = new Laeufer("schwarz", 2, 0, this);
 		schachbrett[3][0] = new Dame("schwarz", 3, 0, this);
 		schachbrett[4][0] = new Koenig("schwarz", 4, 0, this);
-		koenigSpielerWeiss = (Koenig) schachbrett[4][0];
+		koenigSpielerSchwarz = (Koenig) schachbrett[4][0];
 		schachbrett[5][0] = new Laeufer("schwarz", 5, 0, this);
 		schachbrett[6][0] = new Springer("schwarz", 6, 0, this);
 		schachbrett[7][0] = new Turm("schwarz", 7, 0, this);
@@ -46,13 +46,21 @@ public class Schachbrett {
 		schachbrett[2][7] = new Laeufer("weiss", 2, 7, this);
 		schachbrett[3][7] = new Dame("weiss", 3, 7, this);
 		schachbrett[4][7] = new Koenig("weiss", 4, 7, this);
-		koenigSpielerSchwarz = (Koenig) schachbrett[4][7];
+		koenigSpielerWeiss = (Koenig) schachbrett[4][7];
 		schachbrett[5][7] = new Laeufer("weiss", 5, 7, this);
 		schachbrett[6][7] = new Springer("weiss", 6, 7, this);
 		schachbrett[7][7] = new Turm("weiss", 7, 7, this);
 		for(int i = 0; i < 8; i++) {
 			schachbrett[i][6] = new Bauer("weiss", i, 6, this);
 		}
+	}
+	
+	public Koenig getKing(String currentPlayer) {
+		return currentPlayer == "weiss" ? koenigSpielerWeiss: koenigSpielerSchwarz;
+	}
+	
+	public Koenig getOpponentKing(String currentPlayer) {
+		return currentPlayer == "weiss" ? koenigSpielerSchwarz: koenigSpielerWeiss;
 	}
 	
 	public Figur getFigurAt(int x, int y) {
