@@ -1,9 +1,7 @@
 package Figuren;
 
 import java.util.ArrayList;
-
 import Schach.Schachbrett;
-import Schach.Steuerung;
 
 public class Bauer extends Figur {
 	
@@ -18,8 +16,8 @@ public class Bauer extends Figur {
 
 	@Override
 	public ArrayList<Koordinate> getAllPossibleMoves() {
-		int richtung, x = this.x, y = this.y;
-		//System.out.println(x + " " + y);
+		// Richtung des Bauers, da dieser nur in eine Richtung ziehen kann
+		int richtung;
 		if(spielerFarbe == "weiss") richtung = -1;
 		else richtung = 1;
 		
@@ -40,7 +38,7 @@ public class Bauer extends Figur {
 			possibleMoves.add(new Koordinate(x - 1, y + (1 * richtung)));
 		// Einen vor und einen rechts (Nur um zu schlagen)
 		if(game.getFigurAt(x + 1, y + (1 * richtung)) != null && game.getFigurAt(x + 1, y + (1 * richtung)).spielerFarbe != this.spielerFarbe)
-		possibleMoves.add(new Koordinate(x + 1, y + (1 * richtung)));
+			possibleMoves.add(new Koordinate(x + 1, y + (1 * richtung)));
 		
 		return possibleMoves;
 	}

@@ -1,13 +1,9 @@
 package Figuren;
 
 import java.util.ArrayList;
-
 import Schach.Schachbrett;
-import Schach.Steuerung;
 
 public class Turm extends Figur {
-	
-	private boolean firstMove = true;
 	
 	public Turm(String spielerFarbe, int x, int y, Schachbrett brett) {
 		super(spielerFarbe, x, y, brett);
@@ -16,10 +12,6 @@ public class Turm extends Figur {
 		}else {
 			this.image = "Assets/Figuren/turm_schwarz.png";
 		}
-	}
-	
-	public void setFirstMove(boolean firstMove) {
-		this.firstMove = firstMove;
 	}
 
 	@Override

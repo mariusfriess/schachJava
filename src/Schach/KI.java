@@ -13,12 +13,17 @@ import Figuren.Turm;
 public class KI {
 	
 	private Steuerung steuerung;
+	// Tiefe fuer die Tiefensuche des Algorithmus
 	private int depth = 5;
 
 	public KI(Steuerung steuerung) {
 		this.steuerung = steuerung;
 	}
 	
+	/***
+	 * Errechnet den bestemoeglichen Zug fuer den Spieler und gibt diesen zurueck
+	 * @return bestMove
+	 */
 	public Move calcMove() {
 		Move bestMove = null;
 		int bestMoveVal = -9999;
@@ -70,6 +75,11 @@ public class KI {
 		}
 	}
 	
+	/***
+	 * Gibt den aktuellen Wert des Schachfeldes zurueck, je niedriger, desto besser fuer schwarz,
+	 * je hoeher, desto besser fuer weiss
+	 * @return totalEvaluation
+	 */
 	private int evaluateBoard() {
 		int total = 0;
 		for(int i = 0; i < 8; i++) {
@@ -80,6 +90,11 @@ public class KI {
 		return total;
 	}
 	
+	/***
+	 * Gibt den Wert der bestimmten Figur zurueck
+	 * @param f - Figur
+	 * @return val
+	 */
 	private int pieceValue(Figur f) {
 		if(f == null) return 0;
 		int val = 0;

@@ -1,13 +1,9 @@
 package Figuren;
 
 import java.util.ArrayList;
-
 import Schach.Schachbrett;
-import Schach.Steuerung;
 
 public class Koenig extends Figur {
-	
-	private boolean firstMove = true;
 	
 	public Koenig(String spielerFarbe, int x, int y, Schachbrett brett) {
 		super(spielerFarbe, x, y, brett);
@@ -18,10 +14,10 @@ public class Koenig extends Figur {
 		}
 	}
 	
-	public void setFirstMove(boolean firstMove) {
-		this.firstMove = firstMove;
-	}
-	
+	/***
+	 * Ueberprueft ob der Koenig angegriffen wird und somit im Schach steht
+	 * @return isInCheck
+	 */
 	public boolean istImSchach() {
 		Figur schachFeld[][] = game.getBoard();
 		for(int i = 0; i < 8; i++) {
@@ -37,30 +33,6 @@ public class Koenig extends Figur {
 			}
 		}
 		return false;
-	}
-	
-	public boolean istSchachmatt() {
-		// TODO RICHTIG IMPLEMENTIEREN
-		if(!(istImSchach())) return false;
-		Figur schachFeld[][] = game.getBoard();
-		ArrayList<Koordinate> myPossibleMoves = getAllPossibleMoves();
-		for(Koordinate myPossibleMove: myPossibleMoves) {
-			boolean z = false;
-			for(int i = 0; i < 8; i++) {
-				for(int j = 0; j < 8; j++) {
-					if(schachFeld[i][j] != null && schachFeld[i][j].spielerFarbe != this.spielerFarbe) {
-						ArrayList<Koordinate> possibleMoves = schachFeld[i][j].getAllPossibleMoves();
-						for(Koordinate possibleMove: possibleMoves) {
-							if(myPossibleMove.getX() == possibleMove.getX() && myPossibleMove.getY() == possibleMove.getY()) {
-								z = true;
-							}
-						}
-					}
-				}
-			}
-			if(z == false) return false;
-		}
-		return true;
 	}
 
 	@Override

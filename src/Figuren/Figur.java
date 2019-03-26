@@ -1,9 +1,7 @@
 package Figuren;
 
 import java.util.ArrayList;
-
 import Schach.Schachbrett;
-import Schach.Steuerung;
 
 public abstract class Figur {
 	
@@ -45,5 +43,9 @@ public abstract class Figur {
 		return false;
 	}
 	
+	/***
+	 * Gibt fuer jede Figur unterschiedlich ihre moeglichen Zuege zurueck
+	 * @return possibleMoves
+	 */
 	public abstract ArrayList<Koordinate> getAllPossibleMoves();
 }

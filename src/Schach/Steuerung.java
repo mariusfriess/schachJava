@@ -1,58 +1,55 @@
 package Schach;
 
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import Figuren.*;
 
 public class Steuerung {
 
 	private Schachbrett brett = new Schachbrett();
-	
 	private GUI gui = new GUI(this);
+	private KI ki = new KI(this);
 	
 	private String currentPlayer = "weiss";
 	
-	private Timer timer = new Timer();
+	private Timer timer1 = new Timer();
 	private int timeSpielerWeiss = 300;
 	private int timeSpielerSchwarz = 300;
 	
 	private Figur selectedFigur;
 	private ArrayList<Koordinate> possibleMoves;
+	private ArrayList<Move> moveHistory = new ArrayList<Move>();
+
+	private boolean kiPlaying = false;
+	private boolean timerActive = false;
 	
-	private boolean running = true;
-	private boolean kiPlaying = true;
-	
-	public static final int FPS = 60;
-	public static final long maxLoopTime = 1000 / FPS;
-	
-	private int clickedX = -1;
-	private int clickedY = -1;
-	
-	private KI ki = new KI(this);
-	
-	public Steuerung(boolean ki) {
+	public Steuerung(boolean ki, int timerCounter) {
 		this.kiPlaying = ki;
+		if(!ki && timerCounter > 0) {
+			timerActive = true;
+			timeSpielerWeiss = timerCounter * 60;
+			timeSpielerSchwarz = timerCounter * 60;
+			gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
+			gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
+		}
+		gui.getSpielerWeissGrafik().setActive(true);
 	}
 	
+	/***
+	 * Zeichnet die verschiedenen Panels direkt neu
+	 */
 	private void repaintWindow() {
+		gui.getSpielerWeissGrafik().paintImmediately(0,0,200,200);
+		gui.getSpielerSchwarzGrafik().paintImmediately(0,0,200,200);
 		gui.getSchachbrettGrafik().paintImmediately(0,0,800,800);
-		gui.repaintMenus();
 	}
 	
+	/***
+	 * Ueberprueft ob einer der beiden Koenige im Schach steht und zeigt dies auf der Spieloberflaeche an
+	 */
 	private void isKingInCheck() {
 		Koenig k = brett.getKing(currentPlayer);
 		Koenig k2 = brett.getOpponentKing(currentPlayer);
@@ -65,53 +62,49 @@ public class Steuerung {
 		}
 	}
 	
-	/*
-	private void isKingInCheckMate() {
-		Koenig k = brett.getKing(currentPlayer);
-		if(k.istSchachmatt()){
-			gui.repaint();
-			changePlayer();
-			gameOver();
-		}
-	}*/
-	
-	public void spielerKlick() {
+	/***
+	 * Wird beim klick in der SchachbrettGrafik von dieser aufgerufen und zeigt entweder die moeglichen
+	 * Zuege des Spielers an oder leitet einen Zug des Spielers ein
+	 * @param clickedX
+	 * @param clickedY
+	 */
+	public void spielerKlick(int clickedX, int clickedY) {
 		Figur f = brett.getFigurAt(clickedX, clickedY);
 		if(f != null && f.getSpielerFarbe() == currentPlayer) {
+			// Setze die Ausgewählte Figur und zeige alle moeglichen Zuege fuer diese Figur an
 			selectedFigur = f;
 			possibleMoves = f.getAllPossibleMoves();
 			gui.getSchachbrettGrafik().setPossibleMoves(possibleMoves);
 			repaintWindow();
 		}else {
 			gui.getSchachbrettGrafik().setPossibleMoves(null);
-			// TODO Bewege Figur wenn moeglich
+			repaintWindow();
+			// Bewege Figur wenn moeglich
 			if(possibleMoves == null || selectedFigur == null) return;
 			for(Koordinate possibleMove: possibleMoves) {
+				// Wenn auf einen der moeglichen Zuege geklickt wurde, kann die Figur bewegt werden
 				if(possibleMove.getX() == clickedX && possibleMove.getY() == clickedY) {
-					// TODO Bewege Figur
-					if(brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] instanceof Bauer) {
-						// TODO Spieler kann Figur tauschen, wenn Bauer am gegenerischen Ende
-						if(currentPlayer == "weiss" && clickedY == 0) {
-							Dame d = new Dame("weiss", clickedX, 0, brett);
-							brett.getBoard()[clickedX][0] = d;
-							brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] = null;
-							selectedFigur = null;
-							changePlayer();
-							continue;
-						}
-						else if(currentPlayer == "schwarz" && clickedY == 7) {
-							Dame d = new Dame("schwarz", clickedX, 7, brett);
-							brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] = null;
-							brett.getBoard()[clickedX][7] = d;
-							selectedFigur = null;
-							changePlayer();
-							continue;
-						}
+					// Falls die Figur ein Bauer ist und am anderen Ende des Feldes angekommen ist, wird er automatisch zur Dame
+					if(brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] instanceof Bauer && currentPlayer == "weiss" && clickedY == 0) {
+						Dame d = new Dame("weiss", clickedX, 0, brett);
+						brett.getBoard()[clickedX][0] = d;
+						brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] = null;
+						selectedFigur = null;
+						changePlayer();
+						moveDone();
+					} else if(brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] instanceof Bauer && currentPlayer == "schwarz" && clickedY == 7) {
+						Dame d = new Dame("schwarz", clickedX, 7, brett);
+						brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] = null;
+						brett.getBoard()[clickedX][7] = d;
+						selectedFigur = null;
+						changePlayer();
+						moveDone();
+					} else {
+						move(new Move(new Koordinate(clickedX, clickedY), new Koordinate(selectedFigur.getX(), selectedFigur.getY()), selectedFigur, brett.getFigurAt(clickedX, clickedY)));
+						moveDone();
 					}
-					move(clickedX, clickedY, selectedFigur);
-					moveDone(new Move(new Koordinate(clickedX, clickedY), new Koordinate(-1, -1), selectedFigur, null));
 					selectedFigur = null;
-					repaintWindow();
+					// Falls der Spieler gegen den Computer spielt, wird dieser nun seinen Zug machen
 					if(kiPlaying == true) {
 						getZug();
 					}
@@ -122,6 +115,10 @@ public class Steuerung {
 		}
 	}
 	
+	/***
+	 * Konvertiere mehrere ArrayList mit Koordinaten in eine ArrayList mit allen Moves
+	 * @return allMoves - ArrayList mit allen Zuegen fuer ein Spieler
+	 */
 	public ArrayList<Move> getAllPossibleMovesForCurrentPlayer(){
 		ArrayList<Move> allMoves = new ArrayList<Move>();
 		Figur schachFeld[][] = brett.getBoard();
@@ -140,6 +137,11 @@ public class Steuerung {
 		return allMoves;
 	}
 	
+	/***
+	 * Ueberprueft ob der Koenig eines Spielers noch auf dem Feld ist
+	 * @param isCurrentPlayer
+	 * @return isKingOnField
+	 */
 	private boolean checkForKing(boolean isCurrentPlayer) {
 		String player = currentPlayer;
 		if(!isCurrentPlayer) player = currentPlayer == "weiss"? "schwarz": "weiss";
@@ -153,7 +155,12 @@ public class Steuerung {
 		return false;
 	}
 	
-	public void moveDone(Move m) {
+	/***
+	 * Ueberprueft nach dem endgueltigen Beenden eines Zuges ob das Spiel vorbei ist
+	 * und aendert die Anzeige des aktuellen Spielers und initialisiert den Timer
+	 * um die Zeit der Spieler zu messen
+	 */
+	public void moveDone() {
 		if(!checkForKing(true)) {
 			changePlayer(); 
 			gameOver();
@@ -162,41 +169,85 @@ public class Steuerung {
 			gameOver();
 		}
 		isKingInCheck();
+		if(currentPlayer == "weiss"){
+			gui.getSpielerWeissGrafik().setActive(true);
+			gui.getSpielerSchwarzGrafik().setActive(false);
+		}else {
+			gui.getSpielerWeissGrafik().setActive(false);
+			gui.getSpielerSchwarzGrafik().setActive(true);
+		}
+		if(!kiPlaying && timerActive) {
+			timer1.cancel();
+			timer1 = new Timer();
+			// Im Sekundentakt wird die Zeit des jeweiligen Spielers heruntergezaehlt
+			timer1.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					if(currentPlayer == "weiss"){
+						timeSpielerWeiss--;
+						gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
+					}else {
+						timeSpielerSchwarz--;
+						gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
+					}
+				}
+			}, 1000, 1000);
+		}
+		repaintWindow();
 	}
 	
-	public void move(int newX, int newY, Figur f) {
-		brett.getBoard()[f.getX()][f.getY()] = null;
-		brett.getBoard()[newX][newY] = f;
-		f.setPosition(newX, newY);
-		changePlayer();
-	}
-	
+	/***
+	 * Bewegt eine Figur nach dem entsprechenden Move
+	 * @param move
+	 */
 	public void move(Move move) {
+		// Alte Position wird entfernt
 		brett.getBoard()[move.getOldTile().getX()][move.getOldTile().getY()] = null;
+		// Figur wird auf neue Position gesetzt
 		brett.getBoard()[move.getNewTile().getX()][move.getNewTile().getY()] = move.getFigur();
+		// Position wird im Objekt der Figur aktualisiert
 		brett.getBoard()[move.getNewTile().getX()][move.getNewTile().getY()].setPosition(move.getNewTile().getX(), move.getNewTile().getY());
+		// Spieler wird gewechselt
 		changePlayer();
+		// Zug wird gespeichert
+		moveHistory.add(move);
 	}
 	
+	/***
+	 * Macht den entsprechenden Move rueckgaenig
+	 * @param move
+	 */
 	public void undoMove(Move move) {
 		brett.getBoard()[move.getOldTile().getX()][move.getOldTile().getY()] = move.getFigur();
 		brett.getBoard()[move.getNewTile().getX()][move.getNewTile().getY()] = null;
 		brett.getBoard()[move.getOldTile().getX()][move.getOldTile().getY()].setPosition(move.getOldTile().getX(), move.getOldTile().getY());
+		// Falls beim eigentlichen Zug eine Figur geschlagen wurde, wird diese nun auch zurueckgesetzt
 		if(move.getTargetFigur() != null) {
 			brett.getBoard()[move.getNewTile().getX()][move.getNewTile().getY()] = move.getTargetFigur();
 			move.getTargetFigur().setPosition(move.getNewTile().getX(), move.getNewTile().getY());
 		}
 		changePlayer();
-		isKingInCheck();
+		moveHistory.remove(moveHistory.size() - 1);
 	}
 	
+	/***
+	 * Macht den letzten gespeicherten Move rueckgaenig
+	 */
+	public void undoLastMove() {
+		if(moveHistory.size() > 0)
+			undoMove(moveHistory.get(moveHistory.size() - 1));
+		gui.getSchachbrettGrafik().setPossibleMoves(null);
+		moveDone();
+	}
+	
+	/***
+	 * Zeigt am Ende des Spieles einen GameOver Dialog an
+	 */
 	private void gameOver() {
-		running = false;
-		//t = null;
-		timer.cancel();
+		timer1.cancel();
 		System.out.println("Spieler " + currentPlayer + " hat gewonnen");
 		
-		Object[] options = {"Neues Spiel", "Schlie�en"};
+		Object[] options = {"Neues Spiel", "Schliessen"};
 
 		int dialogResult = JOptionPane.showOptionDialog(
 				null,
@@ -217,69 +268,39 @@ public class Steuerung {
 			gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
 		    gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
 		    gui.getSpielerWeissGrafik().setActive(true);
-		    clickedX = -1;
-		    clickedY = -1;
 		    possibleMoves = null;
 		    selectedFigur = null;
-			running = true;
-			//t = new Thread(this);
-			//t.run();
+		} else {
+			gui.dispose();
+			System.exit(0);
 		}
 	}
 	
+	/***
+	 * Fordert die KI auf ihren Zug zu berechnen
+	 */
 	private void getZug() {
-		Thread t = new Thread() {
-			@Override
-			public void run() {
-				Move m = ki.calcMove();
-				if(m != null) {
-					System.out.println("FROM: " + m.getOldTile().getX() + "/" + m.getOldTile().getY());
-					System.out.println("TO: " + m.getNewTile().getX() + "/" + m.getNewTile().getY());
-				}
-				move(m);
-				moveDone(m);
-				repaintWindow();
-			}
-		};
-		t.start();
+		Move m = ki.calcMove();
+		if(m != null) {
+			System.out.println("FROM: " + m.getOldTile().getX() + "/" + m.getOldTile().getY());
+			System.out.println("TO: " + m.getNewTile().getX() + "/" + m.getNewTile().getY());
+		}
+		move(m);
+		moveDone();
+		repaintWindow();
 	}
 	
+	/***
+	 * Aendert den aktuellen Spieler in den jeweils anderen
+	 */
 	private void changePlayer() {
 		currentPlayer = currentPlayer == "weiss" ? "schwarz": "weiss";
-		/*
-		if(currentPlayer == "weiss"){
-			gui.getSpielerWeissGrafik().setActive(true);
-			gui.getSpielerSchwarzGrafik().setActive(false);
-		}else {
-			gui.getSpielerWeissGrafik().setActive(false);
-			gui.getSpielerSchwarzGrafik().setActive(true);
-		}*/
-		/*
-		timer.cancel();
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				if(currentPlayer == "weiss"){
-					timeSpielerWeiss--;
-					gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
-				}else {
-					timeSpielerSchwarz--;
-					gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
-				}
-			}
-		}, 1000, 1000);*/
 	}
 	
+	/***
+	 * @return schachbrett
+	 */
 	public Schachbrett getSchachbrett() {
 		return brett;
-	}
-	
-	public boolean istPattOderSchachmatt() {
-		return false;
-	}
-	public void setClick(int x, int y) {
-		this.clickedX = x;
-		this.clickedY = y;
 	}
 }

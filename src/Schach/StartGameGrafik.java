@@ -2,12 +2,8 @@ package Schach;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,6 +12,11 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class StartGameGrafik extends JFrame {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private JButton startGame = new JButton("Spiel 1 gg. 1 starten");
 	private JButton startGameKi = new JButton("Spiele gg. KI starten");
@@ -26,11 +27,15 @@ public class StartGameGrafik extends JFrame {
 		this.dispose();
 	}
 
-	public StartGameGrafik() throws HeadlessException {		
+	public StartGameGrafik() {		
 		startGame.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Steuerung(false);
+				if(timeLimit.getText().length() == 0) {
+					new Steuerung(false, 0);
+				}else {
+					new Steuerung(false, Integer.parseInt(timeLimit.getText()));
+				}
 				closeFrame();
 			}
 		});
@@ -38,7 +43,7 @@ public class StartGameGrafik extends JFrame {
 		startGameKi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Steuerung(true);
+				new Steuerung(true, 0);
 				closeFrame();
 			}
 		});

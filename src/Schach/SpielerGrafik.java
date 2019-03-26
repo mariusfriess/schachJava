@@ -3,26 +3,34 @@ package Schach;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 public class SpielerGrafik extends JPanel {
 	
-	private String playerName = "Spieler 1";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	private JTextArea playerNameField = new JTextArea(playerName);
+	private JTextArea playerNameField = new JTextArea();
 	private JTextArea playerTimeField = new JTextArea();
 	
-	JPanel infoPanel = new JPanel(new GridBagLayout());
+	private JButton undoButton = new JButton("Undo");
+	
+	private JPanel infoPanel = new JPanel(new GridBagLayout());
+	private JPanel buttonPanel = new JPanel(new FlowLayout());
 
-	public SpielerGrafik(String playerName) {
-		this.playerName = playerName;
+	public SpielerGrafik(String playerName, Steuerung steuerung) {
+		playerNameField.setText(playerName);
 		
 		setPreferredSize(new Dimension(200, 800));
 		setBackground(Color.white);
@@ -33,7 +41,7 @@ public class SpielerGrafik extends JPanel {
 		playerTimeField.setEditable(false);
 		playerNameField.setFocusable(false);
 		playerTimeField.setFocusable(false);
-		playerNameField.setFont(new Font("Sans serif", Font.PLAIN, 24));
+		playerNameField.setFont(new Font("Sans serif", Font.PLAIN, 22));
 		playerTimeField.setFont(new Font("Sans serif", Font.PLAIN, 18));
 		playerNameField.setBackground(new Color(0,0,0,0));
 		playerTimeField.setBackground(new Color(0,0,0,0));
@@ -47,9 +55,26 @@ public class SpielerGrafik extends JPanel {
 		gbc.gridy = 2;
 		infoPanel.add(playerTimeField, gbc);
 		
+		undoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				steuerung.undoLastMove();
+			}
+		});
+		
+		buttonPanel.setBackground(Color.WHITE);
+		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		buttonPanel.add(undoButton);
+		
 		add(infoPanel, BorderLayout.NORTH);
+		add(buttonPanel, BorderLayout.SOUTH);
 	}
 	
+	/***
+	 * Wandelt die in Sekunden uebergebene Zeit in ein Format mit Minuten
+	 * und Sekunden um und zeigt es auf der Grafik an
+	 * @param time
+	 */
 	public void setTime(int time) {
 		int min = (int) Math.floor(time / 60);
 		String minStr = Integer.toString(min);
@@ -65,6 +90,11 @@ public class SpielerGrafik extends JPanel {
 		repaint();
 	}
 	
+	/***
+	 * Setzt die Farbe hinter dem Spielernamen, damit erkennbar wird, welcher Spieler
+	 * an der Reihe ist
+	 * @param activate
+	 */
 	public void setActive(boolean activate) {
 		if(activate) {
 			infoPanel.setBackground(new Color(125, 135, 150));

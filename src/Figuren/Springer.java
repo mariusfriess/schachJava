@@ -1,9 +1,7 @@
 package Figuren;
 
 import java.util.ArrayList;
-
 import Schach.Schachbrett;
-import Schach.Steuerung;
 
 public class Springer extends Figur {
 	

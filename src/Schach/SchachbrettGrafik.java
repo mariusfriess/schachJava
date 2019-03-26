@@ -2,14 +2,11 @@ package Schach;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import Figuren.Figur;
 import Figuren.Koordinate;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +16,7 @@ public class SchachbrettGrafik extends JPanel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1137300914749937758L;
+	private static final long serialVersionUID = 1L;
 	
 	private int size = 100;
 
@@ -32,10 +29,9 @@ public class SchachbrettGrafik extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mousePressed(e);
-				steuerung.setClick(e.getX() / size, e.getY() / size);
-				steuerung.spielerKlick();
+				// Ein Klick auf das Schachfeld wird an die Steuerung uebermittelt
+				steuerung.spielerKlick(e.getX() / size, e.getY() / size);
 			}
 		});
 	}
@@ -48,10 +44,10 @@ public class SchachbrettGrafik extends JPanel {
         drawFiguren(g);
 	}
 	
-	public void setPossibleMoves(ArrayList<Koordinate> possibleMoves) {
-		this.possibleMoves = possibleMoves;
-	}
-	
+	/***
+	 * Zeichnet die moeglichen Zuege eines Spielers auf dem Schachfeld
+	 * @param g
+	 */
 	private void drawPossibleMoves(Graphics g) {
 		if(possibleMoves != null) {
 			Color color = new Color(252, 236, 93);
@@ -59,6 +55,7 @@ public class SchachbrettGrafik extends JPanel {
 			for(Koordinate possibleMove: possibleMoves) {
 				int x = possibleMove.getX() * size;
 				int y = possibleMove.getY() * size;
+				// Wenn an der Position des moeglichen Zuges einen andere Figur steht, wird das Feld rot markiert
 				if(steuerung.getSchachbrett().getFigurAt(possibleMove.getX(), possibleMove.getY()) != null) {
 					drawCircle(g, x, y, color2);
 				}else {
@@ -68,18 +65,36 @@ public class SchachbrettGrafik extends JPanel {
 		}
 	}
 	
-	// Rechteck mit gegebener Farbe und Groesse zeichnen
+	/***
+	 * Zeichnet ein Rechteck an der entsprechenden Position
+	 * @param g
+	 * @param x
+	 * @param y
+	 * @param color
+	 */
 	private void drawTile(Graphics g, int x, int y, Color color){
         g.setColor(color);
         g.fillRect(x, y, this.size, this.size);
 	}
 	
+	/***
+	 * Zeichnet ein abgerundetes Rechteck ab der jeweiligen Position
+	 * Wird benutzt um die moeglichen Zuege anzuzeigen
+	 * @param g
+	 * @param x
+	 * @param y
+	 * @param color
+	 */
 	private void drawCircle(Graphics g, int x, int y, Color color){
         g.setColor(color);
         int z = (int) (this.size * 0.8);
         g.fillRoundRect(x + ((this.size - z) / 2), y + ((this.size - z) / 2), z, z, 20, 20);
 	}
 
+	/***
+	 * Zeichnet die Bilder der Figuren an deren entsprechenden Positionen
+	 * @param g
+	 */
 	private void drawFiguren(Graphics g) {
 		Figur schachFeld[][] = steuerung.getSchachbrett().getBoard();
 		for(int i = 0; i < schachFeld.length; i++) {
@@ -97,6 +112,10 @@ public class SchachbrettGrafik extends JPanel {
 		}
 	}
 	
+	/***
+	 * Zeichnet die einzelnen Schachfelder abwechselt in den unterschiedlichen Farben
+	 * @param g
+	 */
 	private void drawBoard(Graphics g) {
 		Color color;
 		int count = 0; 
@@ -116,6 +135,7 @@ public class SchachbrettGrafik extends JPanel {
             }
             count++;
         }
+        // Gegebenenfalls wird noch angezeigt, ob der Koenig im Schach steht
         if(redTile != null) {
         	drawTile(g, redTile.getX() * size, redTile.getY() * size, new Color(255, 65, 54));
         }
@@ -123,6 +143,10 @@ public class SchachbrettGrafik extends JPanel {
 	
 	public void setRedTile(Koordinate k) {
 		redTile = k;
+	}
+	
+	public void setPossibleMoves(ArrayList<Koordinate> possibleMoves) {
+		this.possibleMoves = possibleMoves;
 	}
 	
 }

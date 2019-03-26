@@ -1,7 +1,5 @@
 package Schach;
 
-import java.util.ArrayList;
-
 import Figuren.Bauer;
 import Figuren.Dame;
 import Figuren.Figur;
@@ -13,9 +11,6 @@ import Figuren.Turm;
 public class Schachbrett {
 	
 	private Figur schachbrett[][];
-	
-	private ArrayList<Figur> figurenSpielerWeiss;
-	private ArrayList<Figur> figurenSpielerSchwarz;
 	
 	private Koenig koenigSpielerWeiss;
 	private Koenig koenigSpielerSchwarz;
@@ -55,21 +50,37 @@ public class Schachbrett {
 		}
 	}
 	
+	/***
+	 * Gibt den Koenig des aktuellen Spielers zurueck
+	 * @param currentPlayer
+	 * @return playerKing
+	 */
 	public Koenig getKing(String currentPlayer) {
 		return currentPlayer == "weiss" ? koenigSpielerWeiss: koenigSpielerSchwarz;
 	}
 	
+	/***
+	 * Gibt den Koenig des gegnerischen Spielers zurueck
+	 * @param currentPlayer
+	 * @return opponentPlayerKing
+	 */
 	public Koenig getOpponentKing(String currentPlayer) {
 		return currentPlayer == "weiss" ? koenigSpielerSchwarz: koenigSpielerWeiss;
 	}
 	
+	/***
+	 * Gibt die Figur an der bestimmten Stelle zurueck
+	 * @param x
+	 * @param y
+	 * @return figurAtXY
+	 */
 	public Figur getFigurAt(int x, int y) {
 		if(x < 0 || x > 7 || y < 0 || y > 7) return null;
 		else return schachbrett[x][y];
 	}
 	
 	public Figur[][] getBoard() {
-		return this.schachbrett;
+		return schachbrett;
 	}
 
 }
