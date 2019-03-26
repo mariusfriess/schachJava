@@ -34,7 +34,6 @@ public class GUI extends JFrame {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-		//this.createBufferStrategy(2);
 	}
 	
 	public SchachbrettGrafik getSchachbrettGrafik() {

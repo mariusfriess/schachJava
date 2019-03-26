@@ -20,7 +20,6 @@ public class KI {
 	}
 	
 	public Move calcMove() {
-		//max(currentDepth, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		Move bestMove = null;
 		int bestMoveVal = -9999;
 		ArrayList<Move> allMoves = steuerung.getAllPossibleMovesForCurrentPlayer();

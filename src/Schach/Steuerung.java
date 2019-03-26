@@ -44,68 +44,14 @@ public class Steuerung {
 	
 	private KI ki = new KI(this);
 	
-	public static void main(String[] args) {
-		new Steuerung();
+	public Steuerung(boolean ki) {
+		this.kiPlaying = ki;
 	}
 	
 	private void repaintWindow() {
 		gui.getSchachbrettGrafik().paintImmediately(0,0,800,800);
 		gui.repaintMenus();
-		/*
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-
-				@Override
-				public void run() {
-					gui.getSchachbrettGrafik().paintImmediately(0,0,800,800);
-					gui.repaintMenus();
-				}
-				
-			});
-		} catch (Exception e){
-			e.printStackTrace();
-		}*/
 	}
-	
-	/*
-	@Override
-	public void run() {
-		System.out.print("Thread started");
-		long timestamp;
-	    long oldTimestamp;
-	    
-	    gui.getSpielerWeissGrafik().setTime(timeSpielerWeiss);
-	    gui.getSpielerSchwarzGrafik().setTime(timeSpielerSchwarz);
-	    gui.getSpielerWeissGrafik().setActive(true);
-	    
-	    while(running) {
-	      oldTimestamp = System.currentTimeMillis();
-	      //update();
-	      timestamp = System.currentTimeMillis();
-	      if(timestamp-oldTimestamp > maxLoopTime) {
-	        System.out.println("Wir zu spaeht!");
-	        continue;
-	      }
-	      repaintWindow();
-	      timestamp = System.currentTimeMillis();
-	      //System.out.println(maxLoopTime + " : " + (timestamp-oldTimestamp));
-	      if(timestamp-oldTimestamp <= maxLoopTime) {
-	        try {
-	          Thread.sleep(maxLoopTime - (timestamp-oldTimestamp) );
-	        } catch (InterruptedException e) {
-	          e.printStackTrace();
-	        }
-	      }
-	    }
-		
-	}*/
-	
-	
-	/*private void update() {
-		spielerKlick();
-		isKingInCheck();
-		// NOT WORKING isKingInCheckMate();
-	}*/
 	
 	private void isKingInCheck() {
 		Koenig k = brett.getKing(currentPlayer);
@@ -143,9 +89,6 @@ public class Steuerung {
 			for(Koordinate possibleMove: possibleMoves) {
 				if(possibleMove.getX() == clickedX && possibleMove.getY() == clickedY) {
 					// TODO Bewege Figur
-					if(brett.getBoard()[clickedX][clickedY] instanceof Koenig) {
-						gameOver();
-					}
 					if(brett.getBoard()[selectedFigur.getX()][selectedFigur.getY()] instanceof Bauer) {
 						// TODO Spieler kann Figur tauschen, wenn Bauer am gegenerischen Ende
 						if(currentPlayer == "weiss" && clickedY == 0) {
@@ -166,6 +109,7 @@ public class Steuerung {
 						}
 					}
 					move(clickedX, clickedY, selectedFigur);
+					moveDone(new Move(new Koordinate(clickedX, clickedY), new Koordinate(-1, -1), selectedFigur, null));
 					selectedFigur = null;
 					repaintWindow();
 					if(kiPlaying == true) {
@@ -186,7 +130,6 @@ public class Steuerung {
 				if(schachFeld[i][j] != null && schachFeld[i][j].getSpielerFarbe() == currentPlayer) {
 					ArrayList<Koordinate> moves = schachFeld[i][j].getAllPossibleMoves();
 					for(Koordinate move: moves) {
-						if(move.getX() == 7 && move.getY() == 7) System.out.println("TRUEEEEEE");
 						if(move.getX() >= 0 && move.getY() >= 0 && move.getX() < 8 && move.getY() < 8) {
 							allMoves.add(new Move(move, new Koordinate(i, j), schachFeld[i][j], schachFeld[move.getX()][move.getY()]));
 						}
@@ -195,6 +138,30 @@ public class Steuerung {
 			}
 		}
 		return allMoves;
+	}
+	
+	private boolean checkForKing(boolean isCurrentPlayer) {
+		String player = currentPlayer;
+		if(!isCurrentPlayer) player = currentPlayer == "weiss"? "schwarz": "weiss";
+		for(int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++) {
+				if(brett.getFigurAt(i, j) instanceof Koenig && brett.getFigurAt(i, j).getSpielerFarbe() == player) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void moveDone(Move m) {
+		if(!checkForKing(true)) {
+			changePlayer(); 
+			gameOver();
+		}
+		else if(!checkForKing(false)) {
+			gameOver();
+		}
+		isKingInCheck();
 	}
 	
 	public void move(int newX, int newY, Figur f) {
@@ -220,6 +187,7 @@ public class Steuerung {
 			move.getTargetFigur().setPosition(move.getNewTile().getX(), move.getNewTile().getY());
 		}
 		changePlayer();
+		isKingInCheck();
 	}
 	
 	private void gameOver() {
@@ -269,6 +237,7 @@ public class Steuerung {
 					System.out.println("TO: " + m.getNewTile().getX() + "/" + m.getNewTile().getY());
 				}
 				move(m);
+				moveDone(m);
 				repaintWindow();
 			}
 		};

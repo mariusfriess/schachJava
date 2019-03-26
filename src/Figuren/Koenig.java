@@ -103,9 +103,9 @@ public class Koenig extends Figur {
 			possibleMoves.add(new Koordinate(x + 1, y + 1));
 		
 		// nach unten limks
-		if((this.y + 1 < 8 && this.x - 1 >= 0 && game.getFigurAt(x + 1, y - 1) == null )
-			|| (game.getFigurAt(x + 1, y - 1) != null && game.getFigurAt(x + 1, y - 1).spielerFarbe != this.spielerFarbe))
-			possibleMoves.add(new Koordinate(x + 1, y - 1));
+		if((this.y + 1 < 8 && this.x - 1 >= 0 && game.getFigurAt(x - 1, y + 1) == null )
+			|| (game.getFigurAt(x - 1, y + 1) != null && game.getFigurAt(x - 1, y + 1).spielerFarbe != this.spielerFarbe))
+			possibleMoves.add(new Koordinate(x - 1, y + 1));
 			
 		return possibleMoves;
 	}
